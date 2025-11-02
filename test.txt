@@ -1,1 +1,2 @@
-asdfg
+git config --global user.email "mjromano341@gmail.com"
+git config --global user.name "mjr"
