@@ -7,8 +7,10 @@ $(document).ready(function() {
     // Initialize game components
     let gameBoard = null;
     let gameState = null;
+    let gameLogic = null;
     let canvas = null;
     let ctx = null;
+    let timerUpdateInterval = null;
     
     /**
      * Initialize the game
@@ -16,6 +18,9 @@ $(document).ready(function() {
     function initGame() {
         // Get current difficulty
         const difficulty = $('#difficulty').val();
+        
+        // Stop timer updates if running
+        stopTimerUpdates();
         
         // Get canvas element
         canvas = document.getElementById('game-canvas');
@@ -37,9 +42,15 @@ $(document).ready(function() {
         const config = Constants.getDifficultyConfig(difficulty);
         gameState = new GameState(config.mines);
         
+        // Initialize game logic
+        gameLogic = new GameLogic(gameBoard, gameState);
+        
         // Update UI
         updateMineCounter();
         updateTimer();
+        
+        // Hide game over overlay
+        $('#game-status').addClass('hidden');
         
         // Log for debugging
         console.log('Game initialized:', {
@@ -48,6 +59,31 @@ $(document).ready(function() {
             cols: gameBoard.getCols(),
             mines: config.mines
         });
+    }
+    
+    /**
+     * Start timer updates
+     */
+    function startTimerUpdates() {
+        if (timerUpdateInterval) {
+            clearInterval(timerUpdateInterval);
+        }
+        
+        timerUpdateInterval = setInterval(function() {
+            if (gameState && gameState.isPlaying()) {
+                updateTimer();
+            }
+        }, Constants.TIMER_INTERVAL);
+    }
+    
+    /**
+     * Stop timer updates
+     */
+    function stopTimerUpdates() {
+        if (timerUpdateInterval) {
+            clearInterval(timerUpdateInterval);
+            timerUpdateInterval = null;
+        }
     }
     
     /**
@@ -69,6 +105,41 @@ $(document).ready(function() {
     }
     
     /**
+     * Handle game over
+     */
+    function handleGameOver(won) {
+        stopTimerUpdates();
+        const statusDiv = $('#game-status');
+        const messageDiv = $('.status-message');
+        
+        statusDiv.removeClass('hidden');
+        
+        if (won) {
+            messageDiv.text('Congratulations! You won!');
+            messageDiv.css('color', '#4CAF50');
+        } else {
+            messageDiv.text('Game Over! You hit a mine.');
+            messageDiv.css('color', '#f44336');
+            
+            // Reveal all mines (for Phase 3 rendering)
+            if (gameLogic) {
+                gameLogic.revealAllMines();
+            }
+        }
+        
+        // Final UI update
+        updateUI();
+    }
+    
+    /**
+     * Update UI elements
+     */
+    function updateUI() {
+        updateMineCounter();
+        updateTimer();
+    }
+    
+    /**
      * Handle new game button click
      */
     $('#new-game-btn').on('click', function() {
@@ -82,6 +153,21 @@ $(document).ready(function() {
         initGame();
     });
     
+    /**
+     * Handle play again button
+     */
+    $('#play-again-btn').on('click', function() {
+        initGame();
+    });
+    
+    // Hook into GameState to start timer updates
+    // Override start method to trigger timer updates
+    const originalGameStateStart = GameState.prototype.start;
+    GameState.prototype.start = function() {
+        originalGameStateStart.call(this);
+        startTimerUpdates();
+    };
+    
     // Initialize game on page load
     initGame();
     
@@ -89,6 +175,7 @@ $(document).ready(function() {
     window.markSweeper = {
         gameBoard: () => gameBoard,
         gameState: () => gameState,
+        gameLogic: () => gameLogic,
         canvas: () => canvas,
         ctx: () => ctx
     };
