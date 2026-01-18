@@ -291,5 +291,35 @@ class GameLogic {
         });
         return mines;
     }
+
+    /**
+     * Handle cell click (wrapper for revealCell with compatible return format)
+     * @param {number} row - Row index
+     * @param {number} col - Column index
+     * @returns {Object} Result object with revealed cells array
+     */
+    handleCellClick(row, col) {
+        const result = this.revealCell(row, col);
+
+        // Convert revealedCells to revealed for compatibility
+        if (result.revealedCells) {
+            result.revealed = result.revealedCells.map(cell => ({
+                row: cell.row,
+                col: cell.col
+            }));
+        }
+
+        return result;
+    }
+
+    /**
+     * Handle cell flag (wrapper for flagCell)
+     * @param {number} row - Row index
+     * @param {number} col - Column index
+     * @returns {Object} Result object
+     */
+    handleCellFlag(row, col) {
+        return this.flagCell(row, col);
+    }
 }
 
