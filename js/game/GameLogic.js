@@ -118,8 +118,21 @@ class GameLogic {
      */
     cascadeReveal(startRow, startCol) {
         const revealedCells = [];
-        const queue = [{ row: startRow, col: startCol }];
+        const queue = [];
         const visited = new Set();
+
+        // Mark starting cell as visited
+        const startKey = `${startRow},${startCol}`;
+        visited.add(startKey);
+
+        // Start by adding neighbors of the clicked cell to queue
+        const startNeighbors = this.gameBoard.getAdjacentCells(startRow, startCol);
+        startNeighbors.forEach(neighbor => {
+            const key = `${neighbor.row},${neighbor.col}`;
+            if (!visited.has(key)) {
+                queue.push({ row: neighbor.row, col: neighbor.col });
+            }
+        });
 
         while (queue.length > 0) {
             const { row, col } = queue.shift();
@@ -132,7 +145,7 @@ class GameLogic {
             visited.add(key);
 
             const cell = this.gameBoard.getCell(row, col);
-            
+
             // Skip if invalid, already revealed, flagged, or is a mine
             if (!cell || cell.isRevealed || cell.isFlagged || cell.isMine) {
                 continue;
