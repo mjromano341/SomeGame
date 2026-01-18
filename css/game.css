@@ -1,3 +1,100 @@
-/* Game-specific styles */
-/* Will be populated in Phase 3 (Rendering) */
+/* Game-specific styles and animations */
 
+/* Smooth transitions for game state changes */
+.game-container {
+    transition: all 0.3s ease;
+}
+
+/* Canvas hover states */
+#game-canvas:hover {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+}
+
+/* Pulsing animation for timer when game is active */
+@keyframes timerPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.info-item .value.active {
+    animation: timerPulse 1s ease-in-out infinite;
+}
+
+/* Victory celebration effect */
+@keyframes celebrate {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-5deg);
+    }
+    75% {
+        transform: rotate(5deg);
+    }
+}
+
+.game-status.victory {
+    animation: celebrate 0.5s ease-in-out 3;
+}
+
+/* Shake effect for game over */
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+.game-status.defeat {
+    animation: shake 0.5s ease-in-out;
+}
+
+/* Difficulty selector glow effect */
+#difficulty option {
+    padding: 8px;
+}
+
+/* Button press effect */
+button {
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth color transitions */
+.status-message {
+    transition: color 0.3s ease;
+}
+
+/* Enhanced shadow for canvas during gameplay */
+#game-canvas.playing {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 0 0 2px #667eea;
+}
+
+/* Accessibility improvements */
+button:focus,
+select:focus {
+    outline: 3px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* Prevent text selection on game elements */
+.game-info,
+.game-controls,
+.game-status {
+    user-select: none;
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
