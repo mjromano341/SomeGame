@@ -163,8 +163,24 @@ class GameState {
      * @returns {boolean}
      */
     isEnded() {
-        return this.state === Constants.GAME_STATES.WON || 
+        return this.state === Constants.GAME_STATES.WON ||
                this.state === Constants.GAME_STATES.LOST;
+    }
+
+    /**
+     * Check if game has been won
+     * @returns {boolean}
+     */
+    hasWon() {
+        return this.state === Constants.GAME_STATES.WON;
+    }
+
+    /**
+     * Check if game has been lost
+     * @returns {boolean}
+     */
+    hasLost() {
+        return this.state === Constants.GAME_STATES.LOST;
     }
 
     /**
